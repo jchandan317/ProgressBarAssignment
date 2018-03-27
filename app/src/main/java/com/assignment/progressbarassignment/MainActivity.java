@@ -15,26 +15,38 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private EventBus mEventBus;
+    private Button btnShowProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnShowProgress = findViewById(R.id.btnProgressBar);
-        Button btnHi = findViewById(R.id.btnHi);
+        btnShowProgress = findViewById(R.id.btnProgressBar);
+        final Button btnHi = findViewById(R.id.btnHi);
         mProgressBar = findViewById(R.id.progress);
+        mProgressBar.setVisibility(View.GONE);
 
         btnShowProgress.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
+                btnShowProgress.setEnabled(false);
+                mProgressBar.setVisibility(View.VISIBLE);
                 // starting new Async Task
                 new DownloadFileFromURL(new UpdateListener() {
                     @Override
                     public void updateProgressBar(int value) {
                         if (mEventBus != null && mEventBus.isRegistered(MainActivity.this)) {
                             mEventBus.postSticky(value);
+                        }
+                    }
+
+                    @Override
+                    public void finishUpdate() {
+                        if (mEventBus != null && mEventBus.isRegistered(MainActivity.this)) {
+                            mEventBus.postSticky("enable");
                         }
                     }
                 }).execute();
@@ -71,5 +83,9 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setProgress(mProgressBar.getProgress() + value);
     }
 
-
+    @Subscribe
+    public void onEvent(@NonNull String finish) {
+        btnShowProgress.setEnabled(true);
+        mProgressBar.setVisibility(View.GONE);
+    }
 }

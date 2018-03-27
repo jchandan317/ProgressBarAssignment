@@ -7,4 +7,5 @@ package com.assignment.progressbarassignment;
 public interface UpdateListener {
 
     void updateProgressBar(int value);
+    void finishUpdate();
 }

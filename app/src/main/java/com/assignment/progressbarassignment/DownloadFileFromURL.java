@@ -40,5 +40,6 @@ public class DownloadFileFromURL extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
+        mUpdateListener.finishUpdate();
     }
 }
